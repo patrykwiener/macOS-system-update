@@ -29,17 +29,10 @@ Download or clone this repository:
   git clone https://github.com/patrykwiener/macOS-system-update.git
   cd macOS-system-update
   ```
-
-Make the script executable:
-
-  ```zsh
-  chmod +x fullupdate.sh
-  ```
-
 Add an alias to your `.zshrc`:
 
   ```zsh
-  echo 'alias fullupdate="$PWD/fullupdate.sh"' >> ~/.zshrc
+  echo "alias fullupdate='$(pwd)/fullupdate.sh'" >> ~/.zshrc
   source ~/.zshrc
   ```
 
