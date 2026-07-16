@@ -11,6 +11,15 @@
 # Best Practice: Exit immediately if a command exits with a non-zero status.
 set -e
 
+# --- Homebrew non-interactive behaviour ---
+# Auto-confirm upgrades so we never get stuck on the "Do you want to proceed? [y/n]" prompt.
+export HOMEBREW_NO_ASK=1
+# Skip casks that update themselves (e.g. Rectangle). This avoids the
+# "It seems there is already an App at ..." conflict on those upgrades.
+export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1
+# Silence the extra environment hints Homebrew prints during upgrades.
+export HOMEBREW_NO_ENV_HINTS=1
+
 # Define some colors for output to make it more readable
 COLOR_GREEN='\033[0;32m'
 COLOR_YELLOW='\033[0;33m'
@@ -36,7 +45,9 @@ update_homebrew() {
     echo "🔄 Updating formulas..."
     brew update
     echo "⬆️  Upgrading installed packages..."
-    brew upgrade
+    # Don't let a single stubborn package (e.g. a self-updating cask) abort the
+    # whole script via 'set -e' — log it and keep going.
+    brew upgrade || echo -e "${COLOR_YELLOW}⚠️  Some packages failed to upgrade. Continuing with the rest.${COLOR_NC}"
     echo "🧹 Cleaning up old versions and cache..."
     brew cleanup -s
     echo "🔍 Checking for potential issues..."
