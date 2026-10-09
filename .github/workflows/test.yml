@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # macOS, because the script must run with the bash 3.2 that macOS ships.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check syntax with macOS bash 3.2
+        run: /bin/bash -n fullupdate.sh
+
+      - name: ShellCheck
+        run: |
+          HOMEBREW_NO_AUTO_UPDATE=1 brew install shellcheck
+          shellcheck fullupdate.sh tests/run_tests.sh tests/stub.sh
+
+      - name: Scenario tests
+        run: bash tests/run_tests.sh
